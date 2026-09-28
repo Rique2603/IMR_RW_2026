@@ -1,0 +1,32 @@
+import math
+
+
+def maquina_de_estados(x, y, theta, x_alvo, y_alvo, dist_frente, dist_esq, dist_dir):
+	distancia_alvo = math.hypot(x_alvo - x, y_alvo - y)
+
+	if distancia_alvo < 0.2:
+		return "OBJETIVO_ALCANCADO", 0.0, 0.0
+
+	def distancia_segura(valor):
+		try:
+			distancia = float(valor)
+		except (TypeError, ValueError):
+			return 5.0
+		return distancia if 0.1 <= distancia <= 5.0 else 5.0
+
+	frente = distancia_segura(dist_frente)
+	esquerda = distancia_segura(dist_esq)
+	direita = distancia_segura(dist_dir)
+
+	if frente < 0.5:
+		omega = 1.0 if esquerda >= direita else -1.0
+		return "DESVIAR_OBSTACULO", 0.0, omega
+
+	angulo_alvo = math.atan2(y_alvo - y, x_alvo - x)
+	erro = (angulo_alvo - theta + math.pi) % (2 * math.pi) - math.pi
+	omega = 1.5 * erro
+	return "IR_PARA_ALVO", 0.5, omega
+
+
+if __name__ == "__main__":
+	print(maquina_de_estados(0.0, 0.0, 0.0, 2.0, 1.0, 1.0, 2.0, 1.0))

@@ -1,0 +1,25 @@
+def _distancia_segura(valor):
+	try:
+		distancia = float(valor)
+	except (TypeError, ValueError):
+		return 5.0
+	return distancia if 0.1 <= distancia <= 5.0 else 5.0
+
+
+def controle_reativo(distancias):
+	"""Desvia de obstáculos e ajusta a curva conforme o espaço lateral livre."""
+	frente = _distancia_segura(distancias["frente"])
+	esquerda = _distancia_segura(distancias["esquerda"])
+	direita = _distancia_segura(distancias["direita"])
+
+	if frente < 0.4:
+		omega = 1.0 if esquerda >= direita else -1.0
+		return 0.0, omega
+
+	ganho = 0.5
+	omega = ganho * (esquerda - direita)
+	return 0.5, omega
+
+
+if __name__ == "__main__":
+	print(controle_reativo({"frente": 0.3, "esquerda": 2.0, "direita": 1.0}))

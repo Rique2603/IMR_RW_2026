@@ -1,0 +1,16 @@
+def converter_cmd_vel(v, omega, L=0.3, max_wheel_speed=1.5):
+	"""Converte velocidade do robô em velocidades das rodas com saturação proporcional."""
+	velocidade_esquerda = v - omega * L / 2
+	velocidade_direita = v + omega * L / 2
+
+	maior_velocidade = max(abs(velocidade_esquerda), abs(velocidade_direita))
+	if maior_velocidade > max_wheel_speed:
+		fator = max_wheel_speed / maior_velocidade
+		velocidade_esquerda *= fator
+		velocidade_direita *= fator
+
+	return velocidade_esquerda, velocidade_direita
+
+
+if __name__ == "__main__":
+	print(converter_cmd_vel(1.2, 3.0))

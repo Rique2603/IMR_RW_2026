@@ -1,0 +1,33 @@
+import math
+
+
+def processar_scan(leituras_lidar):
+	"""Retorna as menores distâncias válidas à frente, à esquerda e à direita."""
+	leituras = list(leituras_lidar)
+	if len(leituras) != 360:
+		raise ValueError("O scan deve conter exatamente 360 leituras.")
+
+	setores = {
+		"frente": leituras[345:360] + leituras[0:16],
+		"esquerda": leituras[45:136],
+		"direita": leituras[225:316],
+	}
+
+	distancias = {}
+	for nome, setor in setores.items():
+		validas = [
+			float(valor)
+			for valor in setor
+			if math.isfinite(float(valor)) and 0.1 <= float(valor) <= 5.0
+		]
+		distancias[nome] = min(validas) if validas else float("inf")
+
+	return distancias
+
+
+if __name__ == "__main__":
+	scan = [5.0] * 360
+	scan[0] = 1.2
+	scan[90] = 0.8
+	scan[270] = 1.0
+	print(processar_scan(scan))
